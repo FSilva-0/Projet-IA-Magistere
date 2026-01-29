@@ -10,3 +10,5 @@ binaire()
 
 scanner_horizontal()
 scanner_vertical()
+cadrage()
+resize()
