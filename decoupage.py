@@ -41,3 +41,19 @@ def scanner_vertical(image):
 scanner_horizontal(img)
 scanner_vertical(img)
 plt.show()
+
+
+def cadrage(image):
+    liste_horizontale=scanner_horizontal(image)
+    pixels=[]
+    while len(liste_horizontale)!=0:
+        liste=[]
+        i=0
+        while liste_horizontale[i]+1==liste_horizontale[i+1]:
+            liste.append(i)
+            liste_horizontale.remove(liste_horizontale[i])
+            i+=1
+        pixels.append(i+1)
+        liste_horizontale.remove(liste_horizontale[i+1])
+        pixels.append(liste)
+
