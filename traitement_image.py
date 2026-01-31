@@ -38,7 +38,11 @@ def rgb_a_gris(image):
 
 def binaire(image):
     resultat = np.zeros_like(image)
-    resultat[image < 200] = 1
+    moyenne_lumiere = np.mean(image)
+    if moyenne_lumiere > 127:
+       resultat[image < 210] = 1
+    else:
+        resultat[image > 210] = 1
 
     return resultat
 
