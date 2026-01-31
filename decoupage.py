@@ -3,23 +3,20 @@ import matplotlib.pyplot as plt
 
 
 def generar_imagen_falsa():
-    alto = 50
-    ancho = 50
-    imagen = np.zeros((alto, ancho), dtype=int)
+    alto = 60
+    ancho = 80
+    img = np.zeros((alto, ancho), dtype=int)
+    img[5:25, 5:10] = 1
+    img[20:25, 5:15] = 1
+    img[5:25, 25:40] = 1
+    img[10:20, 30:35] = 0
+    img[35:55, 10:15] = 1
+    img[35:40, 30:50] = 1
+    img[35:55, 38:42] = 1
 
-    imagen[10:20, 5:7] = 1
-    imagen[10:20, 10:15] = 1
-    imagen[10:13, 5:15] = 1
-    imagen[17:20, 5:15] = 1
-
-    imagen[10:20, 25:35] = 1
-
-    imagen[35:45, 5:45] = 1
-
-    return imagen
+    return img
 img = generar_imagen_falsa()
 plt.imshow(img, cmap='gray')
-plt.title("Imagen Falsa: 0 (Negro/Fondo) - 1 (Blanco/Texto)")
 
 def intervalles(liste):
     if not liste:
@@ -67,26 +64,36 @@ def cadrage(image):
             caracteres.append(caractere)
     return caracteres
 
-def redimensionner(image)
+def redimensionner(image, final_hauteur, final_largueur):
+    resultat = np.zeros((final_hauteur, final_largueur))
+    orig_hauteur, orig_largueur = image.shape
+    proportion_hauteur = orig_hauteur / final_hauteur
+    proportion_largueur = orig_largueur / final_largueur
 
+    for i in range(final_hauteur):
+        for j in range(final_largueur):
+            orig_x = int(i*proportion_hauteur)
+            orig_y = int(j*proportion_largueur)
 
-print(scanner_horizontal(img))
-print(scanner_vertical(img))
-print(cadrage(img))
-plt.show()
+            orig_x = min(orig_x, orig_hauteur - 1) #Securité car sinon crash de index error
+            orig_y = min(orig_y, orig_largueur - 1)
 
+            resultat[i,j] = image[orig_x, orig_y]
+    return resultat
 
-def cadrage(image):
-    liste_horizontale=scanner_horizontal(image)
-    pixels=[]
-    while len(liste_horizontale)!=0:
-        liste=[]
-        i=0
-        while liste_horizontale[i]+1==liste_horizontale[i+1]:
-            liste.append(i)
-            liste_horizontale.remove(liste_horizontale[i])
-            i+=1
-        pixels.append(i+1)
-        liste_horizontale.remove(liste_horizontale[i+1])
-        pixels.append(liste)
+def normaliser(image):
+    taille_finale = 28
+    taille_interieur = 20
+    h, l = image.shape
+    max_dim = max(h, l)
+    cuadrado = np.zeros((max_dim, max_dim))
+    centre_h = (max_dim -h)//2
+    centre_l = (max_dim - l)//2
+    cuadrado[centre_h:centre_h+h, centre_l:centre_l+l] = image
+    img_20x20 = redimensionner(cuadrado, taille_interieur, taille_interieur)
+
+    resultat = np.zeros((taille_finale, taille_finale))
+    marge = (taille_finale-taille_interieur)//2
+    resultat[marge:marge+taille_interieur, marge:marge+taille_interieur] = img_20x20
+    return resultat
 
