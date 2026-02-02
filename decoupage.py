@@ -52,7 +52,7 @@ def scanner_vertical(image):
     resultat = intervalles(colonnes)
     return resultat
 
-def cadrage(image):
+def cadrage1(image):
     caracteres = []
     lignes_avec_caracteres = scanner_horizontal(image)
 
@@ -63,6 +63,39 @@ def cadrage(image):
             caractere = image_ligne[:, x_min : x_max+1]
             caracteres.append(caractere)
     return caracteres
+
+def cadrage(image):
+    mots = []
+    lignes_avec_caracteres = scanner_horizontal(image)
+
+    for (y_min, y_max) in lignes_avec_caracteres:
+        image_ligne = image[y_min : y_max+1, :]
+        intervalles_lettres = scanner_vertical(image_ligne)
+        espaces = []
+        for k in range(len(intervalles_lettres-1)):
+            fin_actuel = intervalles_lettres[k][1]
+            debut_suivant = intervalles_lettres[k+1][0]
+            distance = debut_suivant - fin_actuel
+            espaces.append(distance)
+#Calcul de l'espace entre les mots
+        seuil_espace = 0
+        if len(espaces) > 0:
+            moyenne_espace = np.mean(espaces)
+            seuil_espace = 2 * moyenne_espace
+            seuil_espace = max(seuil_espace, 3)
+#Construction des mots
+        mot_actuel = []
+        for k, (x_min, x_max) in enumerate(intervalles_lettres):
+            lettre = image_ligne[:, x_min : x_max+1]
+            mot_actuel.append(lettre)
+            if k<len(espaces):
+                distance_apres = espaces[k]
+                if distance_apres > seuil_espace:
+                    mots.append(mot_actuel)
+                    mot_actuel = []
+        if mot_actuel:
+            mots.extend(mot_actuel)
+    return mots
 
 def redimensionner(image, final_hauteur, final_largueur):
     resultat = np.zeros((final_hauteur, final_largueur))
