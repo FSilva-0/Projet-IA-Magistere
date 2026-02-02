@@ -1,6 +1,12 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from PIL import Image
 import random as rd
+
+def importer_image(fichier):
+    img = Image.open(fichier)
+    img = img.convert("RGB")
+    return np.array(img)
 
 def generar_imagen_rgb():
     alto = 50

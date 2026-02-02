@@ -72,7 +72,7 @@ def cadrage(image):
         image_ligne = image[y_min : y_max+1, :]
         intervalles_lettres = scanner_vertical(image_ligne)
         espaces = []
-        for k in range(len(intervalles_lettres-1)):
+        for k in range(len(intervalles_lettres)-1):
             fin_actuel = intervalles_lettres[k][1]
             debut_suivant = intervalles_lettres[k+1][0]
             distance = debut_suivant - fin_actuel
@@ -94,7 +94,7 @@ def cadrage(image):
                     mots.append(mot_actuel)
                     mot_actuel = []
         if mot_actuel:
-            mots.extend(mot_actuel)
+            mots.append(mot_actuel)
     return mots
 
 def redimensionner(image, final_hauteur, final_largueur):
