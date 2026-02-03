@@ -133,33 +133,51 @@ def normaliser(image):
     resultat[marge:marge+taille_interieur, marge:marge+taille_interieur] = img_20x20
     return resultat
 
-def post_decoupage(image):
-    h, l = image.shape
+
+def post_decoupage(imagen_letra):
+    h, l = imagen_letra.shape
     if h == 0 or l == 0:
-        return image
+        return [imagen_letra]
 
-    ratio = l/h
-    if ratio < 0.85:
-        return image
+    ratio = l / h
+    if ratio < 1.05:
+        return [imagen_letra]
 
-    histograme = np.sum(image, axis=0)
-    debut = int(l*0.30)
-    final = int(h*0.70)
-    if debut >= final:
-        return image
-    centre = histograme[debut:final]
-    min = np.min(centre)
-    indice_relative = np.argmin(centre)
-    indice = debut + indice_relative
-    max_encre = np.max(histograme)
-    condition_valle = min < (max_encre * 0.6)
-    condition_conexion_faible = min < (h*0.25)
-    if condition_valle and condition_conexion_faible:
-        lettre_gauche = image[:, indice]
-        lettre_droite = image[:,indice]
-        if lettre_gauche.shape[1] > 2 and lettre_droite.shape[1] > 2:
-            return post_decoupage(lettre_gauche) + post_decoupage(lettre_droite)
-    return image
+    histograma = np.sum(imagen_letra, axis=0)
+    start = int(l * 0.25)
+    end = int(l * 0.75)
+    if start >= end:
+        return [imagen_letra]
+
+    zona_central = histograma[start:end]
+    min_valor = np.min(zona_central)
+    indice_relatif = np.argmin(zona_central)
+    indice = start + indice_relatif
+    max_tinta = np.max(histograma)
+
+    if ratio > 1.35: #decoupage agresif
+        umbral_tinta = 0.60
+        requerir_centro = False
+    else: #decoupage mais on fait gaffe de ne pas deconner
+        umbral_tinta = 0.35
+        requerir_centro = True
+
+    condicion_valle = min_valor < (max_tinta * umbral_tinta)
+    condicion_fina = min_valor < (h * 0.25)
+    condicion_centro = True
+    posicion_corte_relativa = indice / l
+
+    if requerir_centro:
+        if posicion_corte_relativa < 0.40 or posicion_corte_relativa > 0.60:
+            condicion_centro = False
+    if condicion_valle and condicion_fina and condicion_centro:
+        letra_izq = imagen_letra[:, :indice]
+        letra_der = imagen_letra[:, indice:]
+
+        if letra_izq.shape[1] < (l * 0.15) or letra_der.shape[1] < (l * 0.15): #eviter les taches
+            return [imagen_letra]
+        return post_decoupage(letra_izq) + post_decoupage(letra_der)
+    return [imagen_letra]
 
 def pre_normalisation(liste_mots_salle):
     liste_mots_propre = []
@@ -167,7 +185,7 @@ def pre_normalisation(liste_mots_salle):
         nouvelle_mot = []
         for lettre in mot:
             correction = post_decoupage(lettre)
-            nouvelle_mot.append(correction)
+            nouvelle_mot.extend(correction)
         liste_mots_propre.append(nouvelle_mot)
     return liste_mots_propre
 
