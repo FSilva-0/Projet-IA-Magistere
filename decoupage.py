@@ -1,5 +1,8 @@
+from pdb import post_mortem
+
 import numpy as np
 import matplotlib.pyplot as plt
+from numpy.f2py.crackfortran import endifs
 
 
 def generar_imagen_falsa():
@@ -52,7 +55,7 @@ def scanner_vertical(image):
     resultat = intervalles(colonnes)
     return resultat
 
-def cadrage1(image):
+def cadrage(image):
     caracteres = []
     lignes_avec_caracteres = scanner_horizontal(image)
 
@@ -64,7 +67,7 @@ def cadrage1(image):
             caracteres.append(caractere)
     return caracteres
 
-def cadrage(image):
+def cadrage2(image):
     mots = []
     lignes_avec_caracteres = scanner_horizontal(image)
 
@@ -129,4 +132,43 @@ def normaliser(image):
     marge = (taille_finale-taille_interieur)//2
     resultat[marge:marge+taille_interieur, marge:marge+taille_interieur] = img_20x20
     return resultat
+
+def post_decoupage(image):
+    h, l = image.shape
+    if h == 0 or l == 0:
+        return image
+
+    ratio = l/h
+    if ratio < 0.85:
+        return image
+
+    histograme = np.sum(image, axis=0)
+    debut = int(l*0.30)
+    final = int(h*0.70)
+    if debut >= final:
+        return image
+    centre = histograme[debut:final]
+    min = np.min(centre)
+    indice_relative = np.argmin(centre)
+    indice = debut + indice_relative
+    max_encre = np.max(histograme)
+    condition_valle = min < (max_encre * 0.6)
+    condition_conexion_faible = min < (h*0.25)
+    if condition_valle and condition_conexion_faible:
+        lettre_gauche = image[:, indice]
+        lettre_droite = image[:,indice]
+        if lettre_gauche.shape[1] > 2 and lettre_droite.shape[1] > 2:
+            return post_decoupage(lettre_gauche) + post_decoupage(lettre_droite)
+    return image
+
+def pre_normalisation(liste_mots_salle):
+    liste_mots_propre = []
+    for mot in liste_mots_salle:
+        nouvelle_mot = []
+        for lettre in mot:
+            correction = post_decoupage(lettre)
+            nouvelle_mot.append(correction)
+        liste_mots_propre.append(nouvelle_mot)
+    return liste_mots_propre
+
 
