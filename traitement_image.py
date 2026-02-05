@@ -54,10 +54,19 @@ def binarisation(image, k, C):
     for i in range(longueur):
         for j in range(largeur):
             seuil = np.mean(image_pad[i:i+k, j:j+k])
-            if image[i, j] > seuil-C:
+            if image[i, j] < seuil-C:
                 resultat[i, j] = 255
     return resultat
 
+def binaire(image):
+    resultat = np.zeros_like(image)
+    moyenne_lumiere = np.mean(image)
+    if moyenne_lumiere > 127:
+       resultat[image < 210] = 1
+    else:
+        resultat[image > 210] = 1
+
+    return resultat
     
     
 

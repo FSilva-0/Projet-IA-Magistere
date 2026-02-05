@@ -14,12 +14,13 @@ print(fin-debut)
 plt.imshow(im3, cmap="gray")
 plt.show()
 
-"""
-#Traitement
-imagen_test = importer_image("test2.png")
-imagen_gris = rgb_a_gris(imagen_test)
-imagen_binaria = binaire(imagen_gris)
 
+#Traitement
+imagen_test = importer_image("test.png")
+imagen_gris = rgb_a_gris(imagen_test)
+imagen_binaria = binarisation(imagen_gris, C=20,k=11)
+plt.imshow(imagen_binaria, cmap="gray")
+plt.show()
 #Decoupage
 mots_pre = cadrage2(imagen_binaria)
 mot_propre = pre_normalisation(mots_pre)
@@ -31,4 +32,3 @@ for i, mot in enumerate(mot_propre):
         img_norm = normaliser(lettre)
         plt.imshow(img_norm, cmap='gray')
         plt.show()
-        """
