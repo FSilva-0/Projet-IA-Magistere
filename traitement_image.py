@@ -55,7 +55,7 @@ def binarisation(image, k, C):
         for j in range(largeur):
             seuil = np.mean(image_pad[i:i+k, j:j+k])
             if image[i, j] > seuil-C:
-                resultat[i, j] = 255
+                resultat[i, j] = 1
     return resultat
 
     
