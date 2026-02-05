@@ -77,8 +77,3 @@ class IA:
             self.Backwardprop(y_train[i])
 
 
-    def predict(self,x_test, y_test):
-        for i in range(len(x_test)):
-            image = np.ravel(x_test[i]) / 255.0
-            prediction = self.Forwardprop(image)
-
