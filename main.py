@@ -11,7 +11,7 @@ imagen_a_color = generar_imagen_rgb()
 #plt.show()
 
 #Traitement
-imagen_test = importer_image("test.png")
+imagen_test = importer_image("test2.png")
 imagen_gris = rgb_a_gris(imagen_test)
 imagen_binaria = binaire(imagen_gris)
 
