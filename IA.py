@@ -52,13 +52,11 @@ class IA:
                 A = self.fonction_activation(Z)
             self.cache[f"A{l}"] = A
 
-        return self.cache[f"A{self.nbcouche}"]
+        return np.argmax(self.cache[f"A{self.nbcouche}"])
 
     def Backwardprop(self, attendu):
         y = np.zeros((self.nbneuroneparcouche[-1], 1))
         y[attendu] = 1
-
-        # Pour Softmax + Cross-Entropy, dZ est simplement A - y
         dZ = self.cache[f"A{self.nbcouche}"] - y
 
         for l in range(self.nbcouche, 0, -1):
@@ -107,18 +105,15 @@ class IA:
         tauxreussite = 0
         for i in range(len(data)):
             image = data[i, 1:].reshape(-1, 1) / 255.0
-            probabilites = self.Forwardprop(image)
-            prediction = np.argmax(probabilites)
+            prediction = self.Forwardprop(image)
             y_true = int(data[i, 0])
             if prediction == y_true:
                 tauxreussite += 1
             if i > 0 and i % 1000 == 0:
                 print(f"Iteration {i} | Précision cumulée: {(tauxreussite / i) * 100:.2f}%")
 
-
-# Lancement
 df_train, df_test = charger_donnees()
-# Note : EMNIST ByClass a 62 classes (0-9, A-Z, a-z)
+print(df_train.shape)
 mon_ia = IA([784, 128,64, 62], 0.1)
 mon_ia.training(df_train)
 mon_ia.predict(df_test)
