@@ -8,7 +8,7 @@ from IA import IA
 import pandas as pd
 
 #Traitement
-imagen_test = importer_image("test.png")
+imagen_test = importer_image("test2.png")
 imagen_gris = rgb_a_gris(imagen_test)
 imagen_binaria = binarisation(imagen_gris, C=20,k=11)
 plt.imshow(imagen_binaria, cmap="gray")
