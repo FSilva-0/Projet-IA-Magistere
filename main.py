@@ -4,16 +4,8 @@ from decoupage import pre_normalisation, cadrage2, scanner_horizontal, scanner_v
 import numpy as np
 import matplotlib.pyplot as plt
 from time import time
-
-image = importer_image("page.jpg")
-im2 = rgb_a_gris(image)
-debut = time()
-im3 = binarisation(im2, k=11, C=20)
-fin = time()
-print(fin-debut)
-plt.imshow(im3, cmap="gray")
-plt.show()
-
+from IA import IA
+import pandas as pd
 
 #Traitement
 imagen_test = importer_image("test.png")

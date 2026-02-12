@@ -66,19 +66,30 @@ class IA:
             self.poids[f'W{l}'] -= self.tauxapp * self.gradients[f'dW{l}']
             self.biais[f'b{l}'] -= self.tauxapp * self.gradients[f'db{l}']
 
-    def training(self, x_train, y_train):
+    def training(self, df):
+        data = df.values
+        np.random.shuffle(data)
         tauxreussite = 0
-        for i in range(len(x_train)):
-            image = np.ravel(x_train[i]) / 255.0
+        for i in range(len(data)):
+            y_true = int(data[i,0])
+            image = data[i,1:].reshape(-1, 1) / 255
             prediction = self.Forwardprop(image)
-            reponse_ia = np.argmax(prediction)
-            if reponse_ia == y_train[i]:
+            if prediction == y_true:
                 tauxreussite += 1
-            self.Backwardprop(y_train[i])
+            self.Backwardprop(y_true)
+            if i>0 and i%1000 == 0:
+                print(f"Iteration {i} Precision cumulée: {(tauxreussite / i)*100:.2f}%")
 
 
-    def predict(self,x_test, y_test):
-        for i in range(len(x_test)):
-            image = np.ravel(x_test[i]) / 255.0
+    def predict(self, df):
+        data = df.values
+        tauxreussite = 0
+        for i in range(len(data)):
+            image = data[i,1:].reshape(-1, 1) / 255
             prediction = self.Forwardprop(image)
+            y_true = int(data[i,0])
+            if prediction == y_true:
+                tauxreussite += 1
+            if i>0 and i%1000 == 0:
+                print((tauxreussite/i)*100)
 
